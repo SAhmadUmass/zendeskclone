@@ -1,14 +1,12 @@
 'use client'
 
 import { useAuth } from '@/components/AuthContext'
-import { useSupabase } from '@/hooks/useSupabase'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import TicketCreationScreen from '@/components/ticket-creation-screen'
 
 export default function Dashboard() {
   const { user, loading } = useAuth()
-  const supabase = useSupabase()
   const router = useRouter()
 
   useEffect(() => {

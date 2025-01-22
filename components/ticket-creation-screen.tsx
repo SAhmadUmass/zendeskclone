@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Send, Plus, MessageCircle, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useRouter } from "next/navigation"
 import { useSupabase } from "@/hooks/useSupabase"
 import { useAuth } from "@/components/AuthContext"
@@ -38,23 +38,8 @@ export default function TicketCreationScreen() {
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState("")
-  const [loading, setLoading] = useState(true)
 
-  // Fetch tickets
-  useEffect(() => {
-    if (!authLoading && user) {
-      fetchRequests()
-    }
-  }, [user, authLoading])
-
-  // Fetch messages when a ticket is selected
-  useEffect(() => {
-    if (selectedRequest) {
-      fetchMessages(selectedRequest.id)
-    }
-  }, [selectedRequest])
-
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('requests')
@@ -66,12 +51,10 @@ export default function TicketCreationScreen() {
       setRequests(data || [])
     } catch (error) {
       console.error('Error fetching requests:', error)
-    } finally {
-      setLoading(false)
     }
-  }
+  }, [supabase, user?.id])
 
-  const fetchMessages = async (requestId: string) => {
+  const fetchMessages = useCallback(async (requestId: string) => {
     try {
       const { data, error } = await supabase
         .from('messages')
@@ -84,7 +67,21 @@ export default function TicketCreationScreen() {
     } catch (error) {
       console.error('Error fetching messages:', error)
     }
-  }
+  }, [supabase])
+
+  // Fetch tickets
+  useEffect(() => {
+    if (!authLoading && user) {
+      fetchRequests()
+    }
+  }, [user, authLoading, fetchRequests])
+
+  // Fetch messages when a ticket is selected
+  useEffect(() => {
+    if (selectedRequest) {
+      fetchMessages(selectedRequest.id)
+    }
+  }, [selectedRequest, fetchMessages])
 
   const createTicket = async () => {
     if (!newTicketTitle.trim() || !user) return
@@ -157,7 +154,7 @@ export default function TicketCreationScreen() {
         <Card>
           <CardHeader>
             <CardTitle>Create New Ticket</CardTitle>
-            <CardDescription>Describe your issue and we'll help you out!</CardDescription>
+            <CardDescription>Describe your issue and we&apos;ll help you out!</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex space-x-2">
