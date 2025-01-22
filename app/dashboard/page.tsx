@@ -8,7 +8,7 @@ import TicketCreationScreen from '@/components/ticket-creation-screen'
 
 export default function Dashboard() {
   const { user, loading } = useAuth()
-  const { supabase } = useSupabase()
+  const supabase = useSupabase()
   const router = useRouter()
 
   useEffect(() => {

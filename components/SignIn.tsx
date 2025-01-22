@@ -8,7 +8,7 @@ import type { AuthState } from '@/types/auth'
 
 export default function SignIn() {
   const router = useRouter()
-  const { supabase } = useSupabase()
+  const supabase = useSupabase()
   const [state, setState] = useState<AuthState>({
     email: '',
     password: '',

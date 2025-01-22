@@ -15,7 +15,7 @@ const PASSWORD_REGEX = {
 }
 
 export default function SignUp() {
-  const { supabase } = useSupabase()
+  const supabase = useSupabase()
   const [state, setState] = useState<AuthState & { success: boolean }>({
     email: '',
     password: '',
