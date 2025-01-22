@@ -67,7 +67,7 @@ export default function TicketPage({ params }: { params: { id: string } }) {
   const addReaction = (messageId: number, reaction: string) => {
     setMessages((prev) =>
       prev.map((msg) =>
-        msg.id === messageId ? { ...msg, reactions: [...new Set([...msg.reactions, reaction])] } : msg,
+        msg.id === messageId ? { ...msg, reactions: Array.from(new Set([...msg.reactions, reaction])) } : msg,
       ),
     )
   }
